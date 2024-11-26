@@ -1,0 +1,29 @@
+﻿@model TransportSchadules.Models.Stop
+@{
+    ViewData["Title"] = "Удаление остановки";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>Вы уверены, что хотите удалить эту остановку?</p>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Название</th>
+        <td>@Model.Name</td>
+    </tr>
+    <tr>
+        <th>Терминал</th>
+        <td>@(Model.IsTerminal ? "Да" : "Нет")</td>
+    </tr>
+    <tr>
+        <th>Диспетчер</th>
+        <td>@(Model.HasDispatcher ? "Да" : "Нет")</td>
+    </tr>
+</table>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="StopId"/>
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a asp-action="Index" class="btn btn-secondary">Назад</a>
+</form>

@@ -1,0 +1,67 @@
+﻿@model TransportSchadules.ViewModels.SchedulesIndexViewModel
+
+@{
+    ViewData["Title"] = "Список расписаний";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-controller="Schedules" asp-action="Index" method="get" class="form-inline mb-3">
+    <div class="form-group mr-2">
+        <label for="searchString" class="mr-2">Поиск по маршруту:</label>
+        <input type="text" name="searchString" id="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Введите название маршрута...">
+    </div>
+    <button type="submit" class="btn btn-primary">Поиск</button>
+</form>
+
+<a asp-action="Create" class="btn btn-success mb-3">Добавить расписание</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Код маршрута</th>
+            <th>Маршрут</th>
+            <th>День недели</th>
+            <th>Время прибытия</th>
+            <th>Год</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Schedules)
+        {
+            <tr>
+                <td>@item.RouteId</td>
+                <td>@item.Route.Name</td>
+                <td>@item.Weekday</td>
+                <td>@item.ArrivalTime</td>
+                <td>@item.Year</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.ScheduleId" class="btn btn-info btn-sm">Детали</a>
+                    <a asp-action="Edit" asp-route-id="@item.ScheduleId" class="btn btn-warning btn-sm">Редактировать</a>
+                    <a asp-action="Delete" asp-route-id="@item.ScheduleId" class="btn btn-danger btn-sm">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination-container d-flex justify-content-center">
+    @if (Model.PageViewModel.HasPreviousPage)
+    {
+        <a asp-action="Index" asp-route-page="@(Model.PageViewModel.PreviousPage)" class="btn btn-secondary mr-2">
+            ← Назад
+        </a>
+    }
+
+    <span class="btn btn-outline-dark disabled mx-2">
+        Страница @Model.PageViewModel.PageNumber из @Model.PageViewModel.TotalPages
+    </span>
+
+    @if (Model.PageViewModel.HasNextPage)
+    {
+        <a asp-action="Index" asp-route-page="@(Model.PageViewModel.NextPage)" class="btn btn-secondary ml-2">
+            Вперед →
+        </a>
+    }
+</div>

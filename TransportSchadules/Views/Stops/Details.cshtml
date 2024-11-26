@@ -1,0 +1,24 @@
+﻿@model TransportSchadules.Models.Stop
+@{
+    ViewData["Title"] = "Детали остановки";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Название</th>
+        <td>@Model.Name</td>
+    </tr>
+    <tr>
+        <th>Терминал</th>
+        <td>@(Model.IsTerminal ? "Да" : "Нет")</td>
+    </tr>
+    <tr>
+        <th>Диспетчер</th>
+        <td>@(Model.HasDispatcher ? "Да" : "Нет")</td>
+    </tr>
+</table>
+
+<a asp-action="Edit" asp-route-id="@Model.StopId" class="btn btn-warning">Редактировать</a>
+<a asp-action="Index" class="btn btn-secondary">Назад</a>

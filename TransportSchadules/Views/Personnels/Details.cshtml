@@ -1,0 +1,30 @@
+﻿@model TransportSchadules.Models.Personnel
+@{
+    ViewData["Title"] = "Детали работника";
+}
+
+<h1>Детали работника</h1>
+
+<div>
+    <h4>Работник</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Код Работника</dt>
+        <dd class="col-sm-10">@Model.PersonnelId</dd>
+
+        <dt class="col-sm-2">Код Маршрута</dt>
+        <dd class="col-sm-10">@Model.RouteId</dd>
+
+        <dt class="col-sm-2">Дата</dt>
+        <dd class="col-sm-10">@Model.Date</dd>
+
+        <dt class="col-sm-2">Смена</dt>
+        <dd class="col-sm-10">@Model.Shift</dd>
+
+        <dt class="col-sm-2">Работники</dt>
+        <dd class="col-sm-10">@Model.EmployeeList</dd>
+    </dl>
+</div>
+
+<a href="@Url.Action("Edit", new { id = Model.PersonnelId })" class="btn btn-warning">Редактировать</a> |
+<a href="@Url.Action("Index")" class="btn btn-primary">Назад</a>

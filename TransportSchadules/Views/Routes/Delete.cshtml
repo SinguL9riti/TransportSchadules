@@ -1,0 +1,37 @@
+﻿@model TransportSchadules.Models.Route
+@{
+    ViewData["Title"] = "Удаление маршрута";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>Вы уверены, что хотите удалить этот маршрут?</p>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Название</th>
+        <td>@Model.Name</td>
+    </tr>
+    <tr>
+        <th>Тип транспорта</th>
+        <td>@Model.TransportType</td>
+    </tr>
+    <tr>
+        <th>Продолжительность</th>
+        <td>@Model.PlannedTravelTime мин</td>
+    </tr>
+    <tr>
+        <th>Дистанция</th>
+        <td>@Model.Distance км</td>
+    </tr>
+    <tr>
+        <th>Экспресс</th>
+        <td>@(Model.IsExpress ? "Да" : "Нет")</td>
+    </tr>
+</table>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="RouteId" />
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a asp-action="Index" class="btn btn-secondary">Назад</a>
+</form>

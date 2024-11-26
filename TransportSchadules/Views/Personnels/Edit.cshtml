@@ -1,0 +1,38 @@
+﻿@model TransportSchadules.Models.Personnel
+
+@{
+    ViewData["Title"] = "Редактировать работника";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="PersonnelId" />
+
+    <div class="form-group">
+        <label asp-for="RouteId">Маршрут:</label>
+        <input asp-for="RouteId" class="form-control" />
+        <span asp-validation-for="RouteId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Date">Дата:</label>
+        <input asp-for="Date" class="form-control" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Shift">Смена:</label>
+        <input asp-for="Shift" class="form-control" />
+        <span asp-validation-for="Shift" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EmployeeList">Работники:</label>
+        <input asp-for="EmployeeList" class="form-control" />
+        <span asp-validation-for="EmployeeList" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+    <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+</form>

@@ -1,0 +1,38 @@
+﻿@model TransportSchadules.Models.Schedule
+
+@{
+    ViewData["Title"] = "Редактировать расписание";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    <div class="form-group">
+        <label for="RouteId">Маршрут</label>
+        <select asp-for="RouteId" class="form-control" asp-items="ViewBag.RouteId"></select>
+        <span asp-validation-for="RouteId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Weekday">День недели</label>
+        <input type="text" asp-for="Weekday" class="form-control" />
+        <span asp-validation-for="Weekday" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="ArrivalTime">Время прибытия</label>
+        <input type="time" asp-for="ArrivalTime" class="form-control" />
+        <span asp-validation-for="ArrivalTime" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Year">Год</label>
+        <input type="number" asp-for="Year" class="form-control" />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+
+    <input type="hidden" asp-for="ScheduleId" />
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+</form>

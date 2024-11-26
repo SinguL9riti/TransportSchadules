@@ -1,0 +1,17 @@
+﻿@model TransportSchadules.Models.Route
+@{
+    ViewData["Title"] = "Детали маршрута";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <h3>@Model.Name</h3>
+    <p><strong>Тип транспорта:</strong> @Model.TransportType</p>
+    <p><strong>Продолжительность:</strong> @Model.PlannedTravelTime мин</p>
+    <p><strong>Дистанция:</strong> @Model.Distance км</p>
+    <p><strong>Экспресс:</strong> @(Model.IsExpress ? "Да" : "Нет")</p>
+</div>
+
+<a href="@Url.Action("Edit", "Routes", new { id = Model.RouteId })" class="btn btn-warning">Редактировать</a>
+<a href="@Url.Action("Index", "Routes")" class="btn btn-secondary">Назад к списку</a>

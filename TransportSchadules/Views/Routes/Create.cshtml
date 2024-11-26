@@ -1,0 +1,47 @@
+﻿@model TransportSchadules.Models.Route
+@{
+    ViewData["Title"] = "Создание маршрута";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Name">Название:</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TransportType">Тип транспорта:</label>
+        <input asp-for="TransportType" class="form-control" />
+        <span asp-validation-for="TransportType" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PlannedTravelTime">Продолжительность (мин):</label>
+        <input asp-for="PlannedTravelTime" type="number" class="form-control" />
+        <span asp-validation-for="PlannedTravelTime" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Distance">Дистанция (км):</label>
+        <input asp-for="Distance" type="number" step="0.1" class="form-control" />
+        <span asp-validation-for="Distance" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IsExpress">Экспресс:</label>
+        <input asp-for="IsExpress" type="checkbox" />
+        <span asp-validation-for="IsExpress" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+    <a asp-action="Index" class="btn btn-secondary">Назад</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
