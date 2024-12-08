@@ -3,6 +3,7 @@ using TransportSchadules.Models;
 using TransportSchadules.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TransportSchadules.Controllers
 {
@@ -54,6 +55,7 @@ namespace TransportSchadules.Controllers
         }
 
         // 3. Добавление новой остановки
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             return View();
@@ -74,6 +76,7 @@ namespace TransportSchadules.Controllers
 
         // 4. Редактирование остановки
         // GET: Stops/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -129,6 +132,7 @@ namespace TransportSchadules.Controllers
 
         // 5. Удаление остановки
         // GET: Stops/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

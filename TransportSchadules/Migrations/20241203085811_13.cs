@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TransportSchadules.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class _13 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -218,6 +218,7 @@ namespace TransportSchadules.Migrations
                     ScheduleId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RouteId = table.Column<int>(type: "int", nullable: false),
+                    StopId = table.Column<int>(type: "int", nullable: false),
                     Weekday = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ArrivalTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false)
@@ -230,6 +231,12 @@ namespace TransportSchadules.Migrations
                         column: x => x.RouteId,
                         principalTable: "Routes",
                         principalColumn: "RouteId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Stops_StopId",
+                        column: x => x.StopId,
+                        principalTable: "Stops",
+                        principalColumn: "StopId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -281,6 +288,11 @@ namespace TransportSchadules.Migrations
                 name: "IX_Schedules_RouteId",
                 table: "Schedules",
                 column: "RouteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_StopId",
+                table: "Schedules",
+                column: "StopId");
         }
 
         /// <inheritdoc />
@@ -308,9 +320,6 @@ namespace TransportSchadules.Migrations
                 name: "Schedules");
 
             migrationBuilder.DropTable(
-                name: "Stops");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -318,6 +327,9 @@ namespace TransportSchadules.Migrations
 
             migrationBuilder.DropTable(
                 name: "Routes");
+
+            migrationBuilder.DropTable(
+                name: "Stops");
         }
     }
 }

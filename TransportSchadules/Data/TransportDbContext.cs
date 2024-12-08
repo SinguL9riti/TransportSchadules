@@ -23,8 +23,9 @@ namespace TransportSchadules.Data
             modelBuilder.Entity<Route>(entity =>
             {
                 entity.Property(e => e.Distance)
-                    .HasColumnType("decimal(18, 4)"); // Укажите нужный тип и масштаб
+                    .HasColumnType("decimal(18, 4)");
             });
         }
+
     }
 }

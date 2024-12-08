@@ -11,6 +11,10 @@ namespace TransportSchadules.Models
         [Required]
         public int RouteId { get; set; }
 
+        [Display(Name = "Код остановки")]
+        [Required]
+        public int StopId { get; set; }
+
         [Display(Name = "День Недели")]
         public string Weekday { get; set; } = null!;
 
@@ -21,5 +25,6 @@ namespace TransportSchadules.Models
         public int Year { get; set; }
 
         public virtual Route Route { get; set; } = null!;
+        public virtual Stop Stop { get; set; } = null!;
     }
 }

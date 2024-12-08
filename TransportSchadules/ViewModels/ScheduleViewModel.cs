@@ -6,6 +6,7 @@ namespace TransportSchadules.ViewModels
     {
 
         public int RouteId { get; set; }
+        public int StopId { get; set; }
 
         public string Weekday { get; set; } = null!;
 

@@ -30,6 +30,11 @@
         <input type="number" asp-for="Year" class="form-control" />
         <span asp-validation-for="Year" class="text-danger"></span>
     </div>
+    <div class="form-group">
+        <label for="StopId">Остановка</label>
+        <select asp-for="StopId" class="form-control" asp-items="ViewBag.StopId"></select>
+        <span asp-validation-for="StopId" class="text-danger"></span>
+    </div>
 
     <button type="submit" class="btn btn-primary">Сохранить</button>
     <a asp-action="Index" class="btn btn-secondary">Отмена</a>

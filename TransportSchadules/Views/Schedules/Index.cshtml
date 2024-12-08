@@ -8,11 +8,17 @@
 
 <form asp-controller="Schedules" asp-action="Index" method="get" class="form-inline mb-3">
     <div class="form-group mr-2">
-        <label for="searchString" class="mr-2">Поиск по маршруту:</label>
-        <input type="text" name="searchString" id="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Введите название маршрута...">
+        <label for="routeSearchString" class="mr-2">Поиск по маршруту:</label>
+        <input type="text" name="routeSearchString" id="routeSearchString" value="@ViewData["CurrentRouteFilter"]" class="form-control" placeholder="Введите название маршрута...">
+    </div>
+    <div class="form-group mr-2">
+        <label for="stopSearchString" class="mr-2">Поиск по остановке:</label>
+        <input type="text" name="stopSearchString" id="stopSearchString" value="@ViewData["CurrentStopFilter"]" class="form-control" placeholder="Введите название остановки...">
     </div>
     <button type="submit" class="btn btn-primary">Поиск</button>
 </form>
+
+
 
 <a asp-action="Create" class="btn btn-success mb-3">Добавить расписание</a>
 
@@ -21,6 +27,7 @@
         <tr>
             <th>Код маршрута</th>
             <th>Маршрут</th>
+            <th>Остановка</th>
             <th>День недели</th>
             <th>Время прибытия</th>
             <th>Год</th>
@@ -33,6 +40,7 @@
             <tr>
                 <td>@item.RouteId</td>
                 <td>@item.Route.Name</td>
+                <td>@item.Stop.Name</td>
                 <td>@item.Weekday</td>
                 <td>@item.ArrivalTime</td>
                 <td>@item.Year</td>

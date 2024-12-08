@@ -12,8 +12,8 @@ using TransportSchadules.Data;
 namespace TransportSchadules.Migrations
 {
     [DbContext(typeof(TransportDbContext))]
-    [Migration("20241126091817_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241203085811_13")]
+    partial class _13
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -299,6 +299,9 @@ namespace TransportSchadules.Migrations
                     b.Property<int>("RouteId")
                         .HasColumnType("int");
 
+                    b.Property<int>("StopId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Weekday")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -309,6 +312,8 @@ namespace TransportSchadules.Migrations
                     b.HasKey("ScheduleId");
 
                     b.HasIndex("RouteId");
+
+                    b.HasIndex("StopId");
 
                     b.ToTable("Schedules");
                 });
@@ -406,7 +411,15 @@ namespace TransportSchadules.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TransportSchadules.Models.Stop", "Stop")
+                        .WithMany()
+                        .HasForeignKey("StopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Route");
+
+                    b.Navigation("Stop");
                 });
 
             modelBuilder.Entity("TransportSchadules.Models.Route", b =>

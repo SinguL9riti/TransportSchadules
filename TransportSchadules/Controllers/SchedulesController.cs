@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Route = TransportSchadules.Models.Route;
 using TransportSchadules.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TransportSchadules.Controllers
 {
@@ -20,17 +21,25 @@ namespace TransportSchadules.Controllers
         }
 
         // GET: Schedules
-        public async Task<IActionResult> Index(string searchString, int page = 1)
+        public async Task<IActionResult> Index(string routeSearchString, string stopSearchString, int page = 1)
         {
             int pageSize = 10; // Количество записей на странице
 
-            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentRouteFilter"] = routeSearchString;
+            ViewData["CurrentStopFilter"] = stopSearchString;
 
-            IQueryable<Schedule> schedules = _context.Schedules.Include(s => s.Route);
+            IQueryable<Schedule> schedules = _context.Schedules
+                .Include(s => s.Route)
+                .Include(s => s.Stop);
 
-            if (!string.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(routeSearchString))
             {
-                schedules = schedules.Where(s => s.Route.Name.Contains(searchString));
+                schedules = schedules.Where(s => s.Route.Name.Contains(routeSearchString));
+            }
+
+            if (!string.IsNullOrEmpty(stopSearchString))
+            {
+                schedules = schedules.Where(s => s.Stop.Name.Contains(stopSearchString));
             }
 
             int count = await schedules.CountAsync();
@@ -49,7 +58,6 @@ namespace TransportSchadules.Controllers
         }
 
 
-
         // GET: Schedules/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -59,8 +67,10 @@ namespace TransportSchadules.Controllers
             }
 
             var schedule = await _context.Schedules
-                .Include(s => s.Route)
+                .Include(s => s.Route)  // Загружаем маршрут
+                .Include(s => s.Stop)   // Загружаем остановку
                 .FirstOrDefaultAsync(m => m.ScheduleId == id);
+
             if (schedule == null)
             {
                 return NotFound();
@@ -69,36 +79,43 @@ namespace TransportSchadules.Controllers
             return View(schedule);
         }
 
+
         // GET: Schedules/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
+            ViewData["StopId"] = new SelectList(_context.Stops, "StopId", "Name");
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "Name");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RouteId,Weekday,ArrivalTime,Year")] ScheduleViewModel scheduleViewModel)
+        public async Task<IActionResult> Create([Bind("RouteId,StopId,Weekday,ArrivalTime,Year")] ScheduleViewModel scheduleViewModel)
         {
             if (ModelState.IsValid)
             {
-                //var route = _context.Routes.FirstOrDefault(i => i.RouteId == scheduleViewModel.RouteId);
-                _context.Add(new Schedule
+                var schedule = new Schedule
                 {
                     RouteId = scheduleViewModel.RouteId,
+                    StopId = scheduleViewModel.StopId,
                     Weekday = scheduleViewModel.Weekday,
                     ArrivalTime = scheduleViewModel.ArrivalTime,
-                    Year = scheduleViewModel.Year,
-                });
+                    Year = scheduleViewModel.Year
+                };
+
+                _context.Add(schedule);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewData["StopId"] = new SelectList(_context.Stops, "StopId", "Name", scheduleViewModel.StopId);
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "Name", scheduleViewModel.RouteId);
             return View(scheduleViewModel);
         }
 
         // Редактирование расписания
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -112,13 +129,15 @@ namespace TransportSchadules.Controllers
                 return NotFound();
             }
 
-            ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "Name", schedule.RouteId);
+            ViewData["StopId"] = new SelectList(_context.Stops, "StopId", "Name", schedule.StopId);
+            ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "Name", schedule.RouteId); 
             return View(schedule);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ScheduleId,RouteId,Weekday,ArrivalTime,Year")] ScheduleIdViewModel scheduleIdViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("ScheduleId,RouteId,StopId,Weekday,ArrivalTime,Year")] ScheduleIdViewModel scheduleIdViewModel)
         {
             if (id != scheduleIdViewModel.ScheduleId)
             {
@@ -134,6 +153,7 @@ namespace TransportSchadules.Controllers
                 {
                     schedule.ScheduleId = scheduleIdViewModel.ScheduleId;
                     schedule.RouteId = scheduleIdViewModel.RouteId;
+                    schedule.StopId = scheduleIdViewModel.StopId;
                     schedule.Weekday = scheduleIdViewModel.Weekday;
                     schedule.ArrivalTime = scheduleIdViewModel.ArrivalTime;
                     schedule.Year = scheduleIdViewModel.Year;
@@ -154,6 +174,7 @@ namespace TransportSchadules.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["StopId"] = new SelectList(_context.Stops, "StopId", "Name", schedule.StopId);
             ViewData["RouteId"] = new SelectList(_context.Routes, "RouteId", "Name", schedule.RouteId);
             return View(schedule);
         }
@@ -164,6 +185,7 @@ namespace TransportSchadules.Controllers
         }
 
         // GET: Schedules/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

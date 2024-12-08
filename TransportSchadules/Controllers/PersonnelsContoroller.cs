@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,6 +51,7 @@ namespace TransportSchadules.Controllers
         }
 
         // GET: Personnels/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             return View();
@@ -69,6 +71,7 @@ namespace TransportSchadules.Controllers
         }
 
         // GET: Personnels/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -117,6 +120,7 @@ namespace TransportSchadules.Controllers
         }
 
         // GET: Personnels/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

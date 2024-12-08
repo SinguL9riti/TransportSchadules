@@ -17,6 +17,7 @@ namespace TransportSchadules.Data
             int numberOfPersonnel = 100;
             Random rand = new Random();
 
+            // Добавляем остановки
             for (int i = 1; i <= numberOfStops; i++)
             {
                 db.Stops.Add(new Stop
@@ -26,8 +27,9 @@ namespace TransportSchadules.Data
                     HasDispatcher = rand.Next(2) == 1
                 });
             }
-            db.SaveChanges();
+            db.SaveChanges(); // Сохраняем остановки
 
+            // Добавляем маршруты
             for (int i = 1; i <= numberOfRoutes; i++)
             {
                 db.Routes.Add(new Route
@@ -39,24 +41,27 @@ namespace TransportSchadules.Data
                     IsExpress = rand.Next(2) == 1
                 });
             }
-            db.SaveChanges();
+            db.SaveChanges(); // Сохраняем маршруты
 
             string[] daysOfWeek = { "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье" };
 
+            // Добавляем расписания
             for (int i = 1; i <= numberOfSchedules; i++)
             {
                 db.Schedules.Add(new Schedule
                 {
                     RouteId = rand.Next(1, numberOfRoutes + 1),
+                    StopId = rand.Next(1, numberOfStops + 1),  // Убедись, что StopId существует в таблице Stops
                     Weekday = daysOfWeek[rand.Next(daysOfWeek.Length)],
                     ArrivalTime = TimeSpan.FromMinutes(rand.Next(1440)),
                     Year = DateTime.Now.Year - rand.Next(2)
                 });
             }
-            db.SaveChanges();
+            db.SaveChanges(); // Сохраняем расписания
 
             string[] lastNames = { "Иванов", "Петров", "Сидоров", "Кузнецов", "Попов", "Мельник", "Точило" };
 
+            // Добавляем персонал
             for (int i = 1; i <= numberOfPersonnel; i++)
             {
                 db.Personnels.Add(new Personnel
@@ -67,9 +72,9 @@ namespace TransportSchadules.Data
                     EmployeeList = $"{lastNames[rand.Next(lastNames.Length)]}_{i}, {lastNames[rand.Next(lastNames.Length)]}_{i + 1}"
                 });
             }
-            db.SaveChanges();
+            db.SaveChanges(); // Сохраняем персонал
         }
+
     }
 }
-
 

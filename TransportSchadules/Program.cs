@@ -1,88 +1,117 @@
-using TransportSchadules.Data;
+п»їusing TransportSchadules.Data;
 using TransportSchadules.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TransportSchadules.Middleware;
 using TransportSchadules.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TransportSchadules
 {
     public class Program
     {
-            public static void Main(string[] args)
+        public static void Main(string[] args)
+        {
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+            // РџРѕР»СѓС‡РµРЅРёРµ СЃС‚СЂРѕРєРё РїРѕРґРєР»СЋС‡РµРЅРёСЏ РёР· РєРѕРЅС„РёРіСѓСЂР°С†РёРё
+            string connectionString = builder.Configuration.GetConnectionString("DBConnection");
+
+            // РќР°СЃС‚СЂРѕР№РєР° СЃРµСЂРІРёСЃРѕРІ
+            builder.Services.AddDbContext<TransportDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
+            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+            // РќР°СЃС‚СЂРѕР№РєР° Identity
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-                IServiceCollection services = builder.Services;
+                options.Password.RequireDigit = true;
+                options.Password.RequireUppercase = true;
+                options.SignIn.RequireConfirmedAccount = false;
+            })
+            .AddEntityFrameworkStores<TransportDbContext>()
+            .AddDefaultTokenProviders();
 
-                // Внедрение зависимости для доступа к БД с использованием EF
-                string connectionString = builder.Configuration.GetConnectionString("DBConnection");
-                services.AddDbContext<TransportDbContext>(options => options.UseSqlServer(connectionString));
-                builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+            // РљСЌС€РёСЂРѕРІР°РЅРёРµ Рё СЃРµСЃСЃРёРё
+            builder.Services.AddMemoryCache();
+            builder.Services.AddResponseCaching();
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(); // РћР±СЂР°С‚РёС‚Рµ РІРЅРёРјР°РЅРёРµ РЅР° СЌС‚Сѓ СЃС‚СЂРѕРєСѓ
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login"; 
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied"; 
+            });
+
+            builder.Services.AddControllersWithViews(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter(policy));
+            });
+
+            builder.Services.AddRazorPages(options =>
+            {
+                options.Conventions.AllowAnonymousToPage("/Identity/Account/Login");
+                options.Conventions.AllowAnonymousToPage("/Identity/Account/Register");
+                options.Conventions.AllowAnonymousToPage("/Identity/Account/AccessDenied");
+            });
 
 
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<TransportDbContext>()
-                .AddDefaultTokenProviders();
-
-            // Добавление кэширования
-            services.AddMemoryCache();
-                services.AddResponseCaching();
-                services.AddControllers(options =>
+            // РќР°СЃС‚СЂРѕР№РєР° РєРѕРЅС‚СЂРѕР»Р»РµСЂРѕРІ СЃ РєРµС€РёСЂРѕРІР°РЅРёРµРј
+            builder.Services.AddControllers(options =>
+            {
+                options.CacheProfiles.Add("Default", new CacheProfile
                 {
-                    options.CacheProfiles.Add("Default",
-                        new CacheProfile()
-                        {
-                            Duration = 2 * 28 + 240
-                        });
+                    Duration = 2 * 28 + 240
                 });
-                // Добавление поддержки сессии
-                services.AddDistributedMemoryCache();
-                services.AddSession();
-                services.AddRazorPages();
-                // Регистрация сервисов
-                services.AddTransient<IViewModelService, HomeModelService>();
-                
-                // Использование MVC
-                services.AddControllersWithViews();
+            });
 
-                WebApplication app = builder.Build();
+            builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
-                if (app.Environment.IsDevelopment())
-                {
-                    app.UseDeveloperExceptionPage();
-                }
-                else
-                {
-                    app.UseExceptionHandler("/Home/Error");
-                }
+            // Р РµРіРёСЃС‚СЂР°С†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёС… СЃРµСЂРІРёСЃРѕРІ
+            builder.Services.AddTransient<IViewModelService, HomeModelService>();
 
-                // Добавляем поддержку статических файлов
-                app.UseStaticFiles();
+            // РЎРѕР·РґР°РЅРёРµ РїСЂРёР»РѕР¶РµРЅРёСЏ
+            WebApplication app = builder.Build();
 
-                // Добавляем поддержку сессий
-                app.UseSession();
-
-                // Инициализация базы данных
-                app.UseDbInitializer();
-
-                // Кэширование
-                app.UseOperatinCache("Inspections 10");
-
-                // Настройка маршрутизации
-                app.UseRouting();
-                app.UseAuthentication();
-                app.UseAuthorization();
-
-                app.UseResponseCaching(); // Включение ResponseCaching Middleware
-                // Устанавливаем сопоставление маршрутов с контроллерами
-                app.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                app.MapRazorPages();
-
-                app.Run();
+            // РќР°СЃС‚СЂРѕР№РєР° pipeline
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+
+            app.UseStaticFiles();
+
+            // РџРѕСЂСЏРґРѕРє middleware РёРјРµРµС‚ Р·РЅР°С‡РµРЅРёРµ:
+            app.UseSession(); // Р­С‚РѕС‚ middleware РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РІС‹Р·РІР°РЅ РґРѕ UseRouting()
+
+            app.UseRouting();
+            app.UseAuthentication(); // РђСѓС‚РµРЅС‚РёС„РёРєР°С†РёСЏ
+            app.UseAuthorization();  // РђРІС‚РѕСЂРёР·Р°С†РёСЏ
+
+            app.UseDbInitializer();
+
+            app.UseResponseCaching();
+
+            // РќР°СЃС‚СЂРѕР№РєР° РјР°СЂС€СЂСѓС‚РѕРІ
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.MapRazorPages();
+
+            // Р—Р°РїСѓСЃРє РїСЂРёР»РѕР¶РµРЅРёСЏ
+            app.Run();
         }
+    }
 }
